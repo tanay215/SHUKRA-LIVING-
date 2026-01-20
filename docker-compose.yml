@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "30011:30011"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - FRONTEND_URL=http://localhost:5173
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://localhost:30011
+    restart: unless-stopped

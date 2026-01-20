@@ -1,0 +1,12 @@
+FROM node:18-alpine
+
+WORKDIR /app/server
+
+COPY server/package*.json ./
+RUN npm install
+
+COPY server/ ./
+
+EXPOSE 30011
+
+CMD ["npm", "start"]

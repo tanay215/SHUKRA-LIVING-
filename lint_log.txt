@@ -1,0 +1,332 @@
+
+> shukra-living@0.0.0 lint
+> eslint . --report-unused-disable-directives
+
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/Header.tsx
+  58:17  error  Error: Cannot access variable before it is declared
+
+`performSearch` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/Header.tsx:58:17
+  56 |         const delayDebounceFn = setTimeout(async () => {
+  57 |             if (searchQuery.length > 1) {
+> 58 |                 performSearch(searchQuery);
+     |                 ^^^^^^^^^^^^^ `performSearch` accessed before it is declared
+  59 |             } else {
+  60 |                 setSearchResults([]);
+  61 |             }
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/Header.tsx:67:5
+  65 |     }, [searchQuery]);
+  66 |
+> 67 |     const performSearch = async (query: string) => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |         try {
+     | ^^^^^^^^^^^^^
+> 69 |             const response = await axios.get(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}&limit=5`);
+     | ^^^^^^^^^^^^^
+> 70 |             if (response.data && response.data.products) {
+     | ^^^^^^^^^^^^^
+> 71 |                 setSearchResults(response.data.products);
+     | ^^^^^^^^^^^^^
+> 72 |             }
+     | ^^^^^^^^^^^^^
+> 73 |         } catch (error) {
+     | ^^^^^^^^^^^^^
+> 74 |             console.error("Search failed", error);
+     | ^^^^^^^^^^^^^
+> 75 |         }
+     | ^^^^^^^^^^^^^
+> 76 |     };
+     | ^^^^^^^ `performSearch` is declared here
+  77 |
+  78 |     const handleLogout = () => {
+  79 |         AuthUtils.clearAuth();  react-hooks/immutability
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/Testimonials.tsx
+  13:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/Testimonials.tsx:13:9
+  11 |         // const fetchTestimonials = async () => { ... }
+  12 |
+> 13 |         setTestimonials([
+     |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |             {
+  15 |                 user: { firstName: "Sarah", lastName: "Jenkins", profileImage: null },
+  16 |                 role: "Interior Designer",  react-hooks/set-state-in-effect
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/WishlistButton.tsx
+  40:6  warning  React Hook useEffect has a missing dependency: 'checkWishlistStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/contexts/AuthContext.tsx
+  16:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/hooks/useAuth.ts
+  36:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/hooks/useAuth.ts:36:9
+  34 |       try {
+  35 |         const user = JSON.parse(userData);
+> 36 |         setAuthState({
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |           user,
+  38 |           token,
+  39 |           isAuthenticated: true,  react-hooks/set-state-in-effect
+  53:5  error  Unnecessary try/catch wrapper                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            no-useless-catch
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/CheckoutPage.tsx
+  78:6  warning  React Hook useEffect has a missing dependency: 'loadUserProfile'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/CollectionPage.tsx
+  51:8  warning  React Hook useEffect has a missing dependency: 'loadProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/HomePage.tsx
+  43:5  error  Error: Cannot access variable before it is declared
+
+`loadUserProfile` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/HomePage.tsx:43:5
+  41 |   // Load Data
+  42 |   useEffect(() => {
+> 43 |     loadUserProfile();
+     |     ^^^^^^^^^^^^^^^ `loadUserProfile` accessed before it is declared
+  44 |     loadSiteSettings();
+  45 |
+  46 |     // Auto-refresh settings
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/HomePage.tsx:51:3
+  49 |   }, []);
+  50 |
+> 51 |   const loadUserProfile = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 52 |     try {
+     | ^^^^^^^^^
+> 53 |       const token = AuthUtils.getToken();
+     …
+     | ^^^^^^^^^
+> 66 |     }
+     | ^^^^^^^^^
+> 67 |   };
+     | ^^^^^ `loadUserProfile` is declared here
+  68 |
+  69 |   const loadSiteSettings = async () => {
+  70 |     try {                                                                                                                                                                                                                                                                           react-hooks/immutability
+  44:5  error  Error: Cannot access variable before it is declared
+
+`loadSiteSettings` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/HomePage.tsx:44:5
+  42 |   useEffect(() => {
+  43 |     loadUserProfile();
+> 44 |     loadSiteSettings();
+     |     ^^^^^^^^^^^^^^^^ `loadSiteSettings` accessed before it is declared
+  45 |
+  46 |     // Auto-refresh settings
+  47 |     const settingsInterval = setInterval(loadSiteSettings, 30000);
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/HomePage.tsx:69:3
+  67 |   };
+  68 |
+> 69 |   const loadSiteSettings = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |     try {
+     | ^^^^^^^^^
+> 71 |       const response = await axios.get(`${API_BASE_URL}/settings`);
+     | ^^^^^^^^^
+> 72 |       setSiteSettings(response.data);
+     | ^^^^^^^^^
+> 73 |     } catch (error) {
+     | ^^^^^^^^^
+> 74 |       console.error('Failed to load settings:', error);
+     | ^^^^^^^^^
+> 75 |     }
+     | ^^^^^^^^^
+> 76 |   };
+     | ^^^^^ `loadSiteSettings` is declared here
+  77 |
+  78 |   // Cart Logic
+  79 |   const addToCart = (product: any) => {  react-hooks/immutability
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OTPVerificationPage.tsx
+  107:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OTPVerificationPage.tsx:107:7
+  105 |     const storedEmail = sessionStorage.getItem('tempEmail');
+  106 |     if (storedEmail) {
+> 107 |       setEmail(storedEmail);
+      |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  108 |     } else {
+  109 |       navigate('/signup');
+  110 |     }  react-hooks/set-state-in-effect
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OrderConfirmationPage.tsx
+  15:47  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OrderConfirmationPage.tsx:15:47
+  13 |         <div className="bg-gray-50 p-4 rounded-lg mb-6">
+  14 |           <p className="text-sm text-gray-600 mb-2">Order Number</p>
+> 15 |           <p className="font-bold text-lg">SL{Date.now().toString().slice(-8)}</p>
+     |                                               ^^^^^^^^^^ Cannot call impure function
+  16 |         </div>
+  17 |         <div className="text-left space-y-2 mb-6">
+  18 |           <div className="flex justify-between">  react-hooks/purity
+  24:29  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OrderConfirmationPage.tsx:24:29
+  22 |           <div className="flex justify-between">
+  23 |             <span>Estimated Delivery:</span>
+> 24 |             <span>{new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
+     |                             ^^^^^^^^^^ Cannot call impure function
+  25 |           </div>
+  26 |         </div>
+  27 |         <button                                                                                                           react-hooks/purity
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OrderHistoryPage.tsx
+  22:6  warning  React Hook useEffect has a missing dependency: 'loadUserOrders'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OrderTrackingPage.tsx
+  19:6  warning  React Hook useEffect has a missing dependency: 'trackOrder'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/ProductDetailPage.tsx
+  98:6  warning  React Hook useEffect has a missing dependency: 'loadProduct'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/ProfilePage.tsx
+  30:5  error    Error: Cannot access variable before it is declared
+
+`loadUserProfile` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/ProfilePage.tsx:30:5
+  28 |
+  29 |   useEffect(() => {
+> 30 |     loadUserProfile();
+     |     ^^^^^^^^^^^^^^^ `loadUserProfile` accessed before it is declared
+  31 |   }, []);
+  32 |
+  33 |   const loadUserProfile = async () => {
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/ProfilePage.tsx:33:3
+  31 |   }, []);
+  32 |
+> 33 |   const loadUserProfile = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 34 |     try {
+     | ^^^^^^^^^
+> 35 |       const token = AuthUtils.getToken();
+     …
+     | ^^^^^^^^^
+> 61 |     }
+     | ^^^^^^^^^
+> 62 |   };
+     | ^^^^^ `loadUserProfile` is declared here
+  63 |
+  64 |   const handleEditProfile = async (e) => {
+  65 |     e.preventDefault();  react-hooks/immutability
+  31:6  warning  React Hook useEffect has a missing dependency: 'loadUserProfile'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/SearchPage.tsx
+  31:6  warning  React Hook useEffect has a missing dependency: 'performSearch'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminAnalytics.tsx
+  17:6  warning  React Hook useEffect has a missing dependency: 'loadAnalytics'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminContact.tsx
+  14:9  error  Error: Cannot access variable before it is declared
+
+`fetchMessages` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminContact.tsx:14:9
+  12 |
+  13 |     useEffect(() => {
+> 14 |         fetchMessages();
+     |         ^^^^^^^^^^^^^ `fetchMessages` accessed before it is declared
+  15 |     }, []);
+  16 |
+  17 |     const fetchMessages = async () => {
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminContact.tsx:17:5
+  15 |     }, []);
+  16 |
+> 17 |     const fetchMessages = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 18 |         try {
+     | ^^^^^^^^^^^^^
+> 19 |             setLoading(true);
+     …
+     | ^^^^^^^^^^^^^
+> 29 |         }
+     | ^^^^^^^^^^^^^
+> 30 |     };
+     | ^^^^^^^ `fetchMessages` is declared here
+  31 |
+  32 |     const markAsRead = async (id: string) => {
+  33 |         try {  react-hooks/immutability
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminCoupons.tsx
+  29:9  error  Error: Cannot access variable before it is declared
+
+`fetchCoupons` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminCoupons.tsx:29:9
+  27 |
+  28 |     useEffect(() => {
+> 29 |         fetchCoupons();
+     |         ^^^^^^^^^^^^ `fetchCoupons` accessed before it is declared
+  30 |     }, []);
+  31 |
+  32 |     const fetchCoupons = async () => {
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminCoupons.tsx:32:5
+  30 |     }, []);
+  31 |
+> 32 |     const fetchCoupons = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 33 |         try {
+     | ^^^^^^^^^^^^^
+> 34 |             setLoading(true);
+     …
+     | ^^^^^^^^^^^^^
+> 45 |         }
+     | ^^^^^^^^^^^^^
+> 46 |     };
+     | ^^^^^^^ `fetchCoupons` is declared here
+  47 |
+  48 |     const handleDelete = async (id: string) => {
+  49 |         if (!window.confirm('Are you sure you want to delete this coupon?')) return;  react-hooks/immutability
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminDashboard.tsx
+  39:6  warning  React Hook useEffect has missing dependencies: 'loadAllOrders' and 'loadProducts'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminOrderDetail.tsx
+  24:6  warning  React Hook useEffect has a missing dependency: 'loadOrderDetail'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminOrders.tsx
+  16:6  warning  React Hook useEffect has a missing dependency: 'loadAllOrders'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminProducts.tsx
+  25:6  warning  React Hook useEffect has a missing dependency: 'loadProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 26 problems (13 errors, 13 warnings)
+

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: shukra-living
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: final_9_v7_shukra_livings_web_app_sprint_3-backend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 30011
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: FRONTEND_URL
+          value: "http://localhost:5173"
+        - name: MONGODB_URI
+          valueFrom:
+            configMapKeyRef:
+              name: shukra-config
+              key: MONGODB_URI
+        - name: JWT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: shukra-config
+              key: JWT_SECRET
+        - name: PORT
+          value: "30011"
+        - name: ADMIN_ID
+          valueFrom:
+            configMapKeyRef:
+              name: shukra-config
+              key: ADMIN_ID
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: shukra-config
+              key: ADMIN_PASSWORD
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

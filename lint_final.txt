@@ -1,0 +1,174 @@
+
+> shukra-living@0.0.0 lint
+> eslint . --report-unused-disable-directives
+
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/Header.tsx
+  45:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/Header.tsx:45:9
+  43 |
+  44 |     useEffect(() => {
+> 45 |         setIsAuthenticated(!!user || AuthUtils.isAuthenticated());
+     |         ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  46 |     }, [user]);
+  47 |
+  48 |     useEffect(() => {  react-hooks/set-state-in-effect
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/components/WishlistButton.tsx
+  40:6  warning  React Hook useEffect has a missing dependency: 'checkWishlistStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/contexts/AuthContext.tsx
+  16:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/hooks/useAuth.ts
+  36:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/hooks/useAuth.ts:36:9
+  34 |       try {
+  35 |         const user = JSON.parse(userData);
+> 36 |         setAuthState({
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |           user,
+  38 |           token,
+  39 |           isAuthenticated: true,  react-hooks/set-state-in-effect
+  53:5  error  Unnecessary try/catch wrapper                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            no-useless-catch
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/CheckoutPage.tsx
+  78:6  warning  React Hook useEffect has a missing dependency: 'loadUserProfile'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/CollectionPage.tsx
+  51:8  warning  React Hook useEffect has a missing dependency: 'loadProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/HomePage.tsx
+  71:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/HomePage.tsx:71:5
+  69 |
+  70 |   useEffect(() => {
+> 71 |     loadUserProfile();
+     |     ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  72 |     loadSiteSettings();
+  73 |
+  74 |     // Auto-refresh settings  react-hooks/set-state-in-effect
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OTPVerificationPage.tsx
+  107:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OTPVerificationPage.tsx:107:7
+  105 |     const storedEmail = sessionStorage.getItem('tempEmail');
+  106 |     if (storedEmail) {
+> 107 |       setEmail(storedEmail);
+      |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  108 |     } else {
+  109 |       navigate('/signup');
+  110 |     }  react-hooks/set-state-in-effect
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OrderHistoryPage.tsx
+  22:6  warning  React Hook useEffect has a missing dependency: 'loadUserOrders'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/OrderTrackingPage.tsx
+  19:6  warning  React Hook useEffect has a missing dependency: 'trackOrder'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/ProductDetailPage.tsx
+  98:6  warning  React Hook useEffect has a missing dependency: 'loadProduct'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/ProfilePage.tsx
+  66:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/ProfilePage.tsx:66:5
+  64 |
+  65 |   useEffect(() => {
+> 66 |     loadUserProfile();
+     |     ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  67 |   }, []);
+  68 |
+  69 |   const handleEditProfile = async (e: React.FormEvent) => {  react-hooks/set-state-in-effect
+  67:6  warning  React Hook useEffect has a missing dependency: 'loadUserProfile'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/SearchPage.tsx
+  31:6  warning  React Hook useEffect has a missing dependency: 'performSearch'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminAnalytics.tsx
+  17:6  warning  React Hook useEffect has a missing dependency: 'loadAnalytics'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminContact.tsx
+  30:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminContact.tsx:30:9
+  28 |
+  29 |     useEffect(() => {
+> 30 |         fetchMessages();
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  31 |     }, []);
+  32 |
+  33 |     const markAsRead = async (id: string) => {  react-hooks/set-state-in-effect
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminCoupons.tsx
+  46:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminCoupons.tsx:46:9
+  44 |
+  45 |     useEffect(() => {
+> 46 |         fetchCoupons();
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  47 |     }, []);
+  48 |
+  49 |     const handleDelete = async (id: string) => {  react-hooks/set-state-in-effect
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminDashboard.tsx
+  39:6  warning  React Hook useEffect has missing dependencies: 'loadAllOrders' and 'loadProducts'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminOrderDetail.tsx
+  24:6  warning  React Hook useEffect has a missing dependency: 'loadOrderDetail'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminOrders.tsx
+  16:6  warning  React Hook useEffect has a missing dependency: 'loadAllOrders'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/tanaytenginkai/Desktop/SHUKRA-LIVING--main/src/pages/admin/AdminProducts.tsx
+  25:6  warning  React Hook useEffect has a missing dependency: 'loadProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 22 problems (9 errors, 13 warnings)
+

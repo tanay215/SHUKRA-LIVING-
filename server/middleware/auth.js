@@ -4,7 +4,7 @@ import User from '../models/User.js';
 export const authenticate = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-
+    
     if (!token) {
       return res.status(401).json({ error: 'Access denied. No token provided.' });
     }
@@ -15,7 +15,7 @@ export const authenticate = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId).select('-password');
-
+    
     if (!user) {
       return res.status(401).json({ error: 'Invalid token.' });
     }
@@ -34,8 +34,8 @@ export const authenticate = async (req, res, next) => {
 export const generateToken = (userId, expiresIn = '24h') => {
   // For admin, use longer expiry with enhanced payload
   const tokenExpiry = userId === 'admin' ? '7d' : expiresIn;
-  return jwt.sign({
-    userId,
+  return jwt.sign({ 
+    userId, 
     role: userId === 'admin' ? 'admin' : 'user',
     iat: Math.floor(Date.now() / 1000),
     jti: Math.random().toString(36).substring(2)
@@ -51,29 +51,4 @@ export const blacklistToken = (token) => {
 
 export const isTokenBlacklisted = (token) => {
   return tokenBlacklist.has(token);
-};
-
-export const authenticateAdmin = (req, res, next) => {
-  try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ error: 'Access denied' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.userId === 'admin') {
-      req.admin = { id: 'admin', role: 'admin' };
-      next();
-    } else {
-      res.status(401).json({ error: 'Admin access required' });
-    }
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      res.status(401).json({ error: 'Token expired' });
-    } else if (error.name === 'JsonWebTokenError') {
-      res.status(401).json({ error: 'Invalid token' });
-    } else {
-      res.status(500).json({ error: 'Authentication failed' });
-    }
-  }
 };

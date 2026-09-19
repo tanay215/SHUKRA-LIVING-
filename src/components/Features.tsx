@@ -1,3 +1,4 @@
+import React from 'react';
 import { Award, PenTool, Tag, Truck, Shield } from 'lucide-react';
 
 const features = [
@@ -10,23 +11,16 @@ const features = [
 
 const Features = () => {
     return (
-        <section className="bg-primary text-cream py-24 border-t border-white/5 relative z-20">
+        <section className="bg-primary text-cream py-16 border-t border-white/5 relative z-20 -mt-2">
             <div className="container mx-auto px-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 lg:gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-10">
                     {features.map((feature, index) => (
                         <div key={index} className="flex flex-col items-center text-center group">
-                            <div className="mb-6 p-5 rounded-full border border-white/5 group-hover:border-accent/30 group-hover:bg-accent/5 transition-all duration-500">
-                                <feature.icon
-                                    className="w-8 h-8 text-accent/80 group-hover:text-accent transition-colors duration-300"
-                                    strokeWidth={0.75}
-                                />
+                            <div className="mb-5 p-4 rounded-full border border-white/10 group-hover:border-accent/50 group-hover:bg-accent/10 transition-all duration-300">
+                                <feature.icon className="w-8 h-8 text-secondary group-hover:text-accent transition-colors" strokeWidth={1} />
                             </div>
-                            <h3 className="text-xs font-serif font-medium tracking-[0.15em] mb-3 text-white uppercase group-hover:text-accent transition-colors duration-300">
-                                {feature.title}
-                            </h3>
-                            <p className="text-xs text-gray-400 font-light tracking-wide leading-relaxed max-w-[150px]">
-                                {feature.desc}
-                            </p>
+                            <h3 className="text-xs font-heading font-bold tracking-[0.15em] mb-2 text-white uppercase">{feature.title}</h3>
+                            <p className="text-xs text-gray-400 font-light tracking-wide">{feature.desc}</p>
                         </div>
                     ))}
                 </div>

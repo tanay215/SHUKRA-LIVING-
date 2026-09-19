@@ -20,9 +20,6 @@ import AdminOrders from '../pages/admin/AdminOrders';
 import AdminOrderDetail from '../pages/admin/AdminOrderDetail';
 import AdminSettings from '../pages/admin/AdminSettings';
 import AdminAnalytics from '../pages/admin/AdminAnalytics';
-import AdminCoupons from '../pages/admin/AdminCoupons';
-import AdminTestimonials from '../pages/admin/AdminTestimonials';
-import AdminContact from '../pages/admin/AdminContact';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AdminProtectedRoute from '../components/AdminProtectedRoute';
 import CreateCredentialsPage from '../pages/CreateCredentialsPage';
@@ -138,18 +135,6 @@ export const router = createBrowserRouter([
       {
         path: 'settings',
         element: <AdminProtectedRoute><AdminSettings /></AdminProtectedRoute>
-      },
-      {
-        path: 'coupons',
-        element: <AdminProtectedRoute><AdminCoupons /></AdminProtectedRoute>
-      },
-      {
-        path: 'testimonials',
-        element: <AdminProtectedRoute><AdminTestimonials /></AdminProtectedRoute>
-      },
-      {
-        path: 'messages',
-        element: <AdminProtectedRoute><AdminContact /></AdminProtectedRoute>
       },
       {
         path: 'analytics',

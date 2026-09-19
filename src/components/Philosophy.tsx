@@ -1,67 +1,38 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 
 const Philosophy = () => {
-    const [philosophy, setPhilosophy] = useState({
-        title: 'Design that Breathes Life',
-        content: 'We believe that furniture should be more than just functional. It should be an expression of your lifestyle, a reflection of your taste, and a source of comfort.',
-        imageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1000&auto=format&fit=crop'
-    });
-
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const response = await axios.get('http://localhost:30011/api/settings');
-                if (response.data?.philosophy) {
-                    setPhilosophy(prev => ({
-                        ...prev,
-                        ...response.data.philosophy,
-                        // Ensure we don't end up with undefined
-                        title: response.data.philosophy.title || prev.title,
-                        content: response.data.philosophy.content || prev.content,
-                        imageUrl: response.data.philosophy.imageUrl || prev.imageUrl
-                    }));
-                }
-            } catch (error) {
-                console.error('Failed to load philosophy:', error);
-            }
-        };
-        fetchSettings();
-    }, []);
-
     return (
-        <section className="bg-cream text-primary py-32">
-            <div className="container mx-auto px-6 lg:px-12">
-                <div className="flex flex-col md:flex-row items-center gap-16 lg:gap-32">
-                    {/* Arch Image */}
-                    <div className="w-full md:w-1/2 relative">
-                        <div className="relative z-10 overflow-hidden rounded-t-[500px] h-[600px] w-full max-w-md mx-auto shadow-2xl">
+        <section className="bg-cream text-primary py-24">
+            <div className="container mx-auto px-6">
+                <div className="flex flex-col md:flex-row items-center gap-16 md:gap-24">
+                    {/* Image */}
+                    <div className="w-full md:w-1/2 relative group">
+                        <div className="absolute inset-0 bg-secondary/30 rounded-t-full rounded-b-none transform translate-x-4 translate-y-4 transition-transform group-hover:translate-x-6 group-hover:translate-y-6"></div>
+                        <div className="relative z-10 overflow-hidden rounded-t-full rounded-b-none shadow-2xl">
                             <img
-                                src={philosophy.imageUrl}
-                                alt="Philosophy"
-                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000 ease-out"
+                                src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1000&auto=format&fit=crop"
+                                alt="Minimalist Interior"
+                                className="w-full h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                         </div>
-                        {/* Decorative Circle */}
-                        <div className="absolute -bottom-8 -right-8 w-32 h-32 border border-accent rounded-full -z-0 hidden md:block opacity-50"></div>
                     </div>
 
                     {/* Content */}
-                    <div className="w-full md:w-1/2 space-y-10">
-                        <div>
-                            <h4 className="text-secondary font-sans font-medium tracking-[0.25em] uppercase text-xs mb-4">Our Philosophy</h4>
-                            <h2 className="text-5xl lg:text-6xl font-serif text-primary leading-tight">
-                                {philosophy.title}
-                            </h2>
-                            <div className="w-24 h-px bg-accent mt-8 mb-8"></div>
-                        </div>
-
-                        <p className="text-secondary leading-loose font-normal text-lg md:text-xl whitespace-pre-wrap max-w-xl">
-                            {philosophy.content}
+                    <div className="w-full md:w-1/2 space-y-8">
+                        <h4 className="text-olive font-medium tracking-[0.2em] uppercase text-xs">Our Philosophy</h4>
+                        <h2 className="text-4xl md:text-6xl font-heading font-bold leading-tight">
+                            Design that <br />
+                            <span className="italic font-light text-secondary">Breathes Life</span>
+                        </h2>
+                        <div className="w-20 h-0.5 bg-accent"></div>
+                        <p className="text-gray-600 leading-loose font-light text-lg">
+                            We believe that furniture should be more than just functional. It should be an expression of your lifestyle, a reflection of your taste, and a source of comfort. Our designs are rooted in the principles of <span className="text-primary font-medium">"Japandi"</span> – a harmonious blend of Japanese rustic minimalism and Scandinavian functionality.
                         </p>
-
-                        <button className="text-primary hover:text-accent font-medium tracking-[0.2em] uppercase text-xs transition-colors border-b border-primary hover:border-accent pb-1 pt-4">
-                            Read Our Story
+                        <p className="text-gray-600 leading-loose font-light text-lg">
+                            Every piece is crafted with sustainable materials and timeless aesthetics, ensuring that your home remains a sanctuary of peace and beauty for years to come.
+                        </p>
+                        <button className="group flex items-center gap-2 text-primary hover:text-accent font-medium tracking-widest uppercase text-xs mt-6 transition-all">
+                            <span className="border-b border-primary group-hover:border-accent pb-1">Read Our Story</span>
                         </button>
                     </div>
                 </div>

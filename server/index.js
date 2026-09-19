@@ -15,7 +15,6 @@ import reviewRoutes from './routes/reviews.js';
 import analyticsRoutes from './routes/analytics.js';
 import returnRoutes from './routes/returns.js';
 import couponRoutes from './routes/coupons.js';
-import contactRoutes from './routes/contacts.js';
 import { sanitizeInput } from './middleware/validation.js';
 import { globalErrorHandler } from './utils/errorHandler.js';
 import Product from './models/Product.js';
@@ -147,23 +146,7 @@ app.use(limiter);
 app.use('/api/admin/login', adminLimiter);
 
 app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      process.env.FRONTEND_URL,
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:5175'
-    ].filter(Boolean);
-
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.indexOf(origin) === -1) {
-      // For dev convenience, maybe log it but still block
-      return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
-    }
-    return callback(null, true);
-  },
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
@@ -306,7 +289,6 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/returns', returnRoutes);
 app.use('/api/coupons', couponRoutes);
-app.use('/api/contacts', contactRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {

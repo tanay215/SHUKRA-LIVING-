@@ -12,7 +12,6 @@ const OrderConfirmationPage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4">Order Placed Successfully!</h2>
         <div className="bg-gray-50 p-4 rounded-lg mb-6">
           <p className="text-sm text-gray-600 mb-2">Order Number</p>
-          {/* eslint-disable-next-line react-hooks/purity */}
           <p className="font-bold text-lg">SL{Date.now().toString().slice(-8)}</p>
         </div>
         <div className="text-left space-y-2 mb-6">
@@ -22,11 +21,10 @@ const OrderConfirmationPage: React.FC = () => {
           </div>
           <div className="flex justify-between">
             <span>Estimated Delivery:</span>
-            {/* eslint-disable-next-line react-hooks/purity */}
             <span>{new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
           </div>
         </div>
-        <button
+        <button 
           onClick={() => {
             // Clear any temporary order data but keep user session
             localStorage.removeItem('orderData');
@@ -37,7 +35,7 @@ const OrderConfirmationPage: React.FC = () => {
         >
           Continue Shopping
         </button>
-        <button
+        <button 
           onClick={() => navigate('/orders')}
           className="w-full mt-2 border border-accent text-accent py-3 rounded-lg font-semibold hover:bg-accent/10 transition"
         >

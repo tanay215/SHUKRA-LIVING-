@@ -1,37 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthUtils } from '../utils/auth';
-import OverviewTab from '../components/account/OverviewTab';
-import OrdersTab from '../components/account/OrdersTab';
-import SettingsTab from '../components/account/SettingsTab';
 
 const API_BASE_URL = 'http://localhost:30011/api';
 
-type TabType = 'overview' | 'orders' | 'settings';
-
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [auth, setAuth] = useState<{
-    user: any;
-    token: string | null;
-    isAuthenticated: boolean;
-  }>({
+  const [auth, setAuth] = useState({
     user: null,
     token: AuthUtils.getToken(),
     isAuthenticated: AuthUtils.isAuthenticated()
   });
-
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
-  const [profileImage, setProfileImage] = useState<string>(''); // For immediate local update if needed
+  const [editProfileData, setEditProfileData] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: ''
+    }
+  });
+  const [profileImageUrl, setProfileImageUrl] = useState('');
+  const [activeTab, setActiveTab] = useState('profile');
 
   useEffect(() => {
-    const tabParam = searchParams.get('tab');
-    if (tabParam && ['overview', 'orders', 'settings'].includes(tabParam)) {
-      setActiveTab(tabParam as TabType);
-    }
-  }, [searchParams]);
+    loadUserProfile();
+  }, []);
 
   const loadUserProfile = async () => {
     try {
@@ -40,12 +37,23 @@ const ProfilePage: React.FC = () => {
         navigate('/login');
         return;
       }
-
+      
       const response = await axios.get(`${API_BASE_URL}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setAuth(prev => ({ ...prev, user: response.data }));
-      setProfileImage(response.data.profileImage || '');
+      const user = response.data;
+      setAuth(prev => ({ ...prev, user }));
+      setEditProfileData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        phone: user.phone || '',
+        address: {
+          street: user.address?.street || '',
+          city: user.address?.city || '',
+          state: user.address?.state || '',
+          zipCode: user.address?.zipCode || ''
+        }
+      });
     } catch (error) {
       console.error('Failed to load profile:', error);
       AuthUtils.clearAuth();
@@ -53,108 +61,246 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    loadUserProfile();
-  }, []);
-
-  const handleTabChange = (tab: string) => {
-    if (['overview', 'orders', 'settings'].includes(tab)) {
-      setActiveTab(tab as TabType);
-      setSearchParams({ tab });
+  const handleEditProfile = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`${API_BASE_URL}/users/profile`, editProfileData, {
+        headers: { Authorization: `Bearer ${auth.token}` }
+      });
+      setAuth(prev => ({ ...prev, user: response.data.user }));
+      alert('Profile updated successfully!');
+    } catch (error) {
+      alert('Failed to update profile');
     }
   };
 
-  const handleLogout = () => {
-    AuthUtils.clearAuth();
-    navigate('/login');
+  const handleChangeProfilePicture = async () => {
+    if (!profileImageUrl) {
+      alert('Please enter image URL');
+      return;
+    }
+    try {
+      const response = await axios.put(`${API_BASE_URL}/users/profile`, {
+        profileImage: profileImageUrl
+      }, {
+        headers: { Authorization: `Bearer ${auth.token}` }
+      });
+      setAuth(prev => ({ ...prev, user: response.data.user }));
+      alert('Profile picture updated successfully!');
+      setProfileImageUrl('');
+      loadUserProfile();
+    } catch (error) {
+      alert('Failed to update profile picture');
+    }
   };
 
   if (!auth.user) {
     return (
-      <div className="min-h-screen bg-[#F7F4EF] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C9A45C]"></div>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F4EF] font-sans pb-20">
-      {/* Top Navigation Bar / Breadcrumb optional */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-[#EEEAE4]">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {/* Logo or Branded Back Button */}
-            <button onClick={() => navigate('/')} className="text-[#2B1E16] font-serif font-bold tracking-widest text-lg">
-              SHUKRA
-            </button>
-          </div>
-
-          <button onClick={handleLogout} className="text-sm text-[#8A8A8A] hover:text-[#2B1E16] transition-colors">
-            Sign Out
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <h1 className="text-2xl font-heading font-bold text-accent">My Profile</h1>
+          <button onClick={() => navigate('/dashboard')} className="text-accent hover:underline">
+            Back to Shop
           </button>
         </div>
       </header>
-
-      <main className="container mx-auto px-4 lg:px-8 py-12 max-w-5xl">
-
-        {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-center gap-6 mb-12 fade-in">
-          <div className="relative group">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white shadow-lg bg-[#EEEAE4] flex items-center justify-center">
-              {profileImage ? (
-                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-2xl text-[#C9A45C] font-serif">{auth.user.firstName?.[0]}</span>
-              )}
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Profile Sidebar */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="text-center mb-6">
+              <div className="w-24 h-24 bg-accent rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 overflow-hidden">
+                {auth.user?.profileImage ? (
+                  <img src={auth.user.profileImage} alt="Profile" className="w-24 h-24 rounded-full object-cover" />
+                ) : (
+                  `${auth.user?.firstName?.[0] || ''}${auth.user?.lastName?.[0] || ''}`
+                )}
+              </div>
+              <h3 className="font-bold text-lg">{auth.user?.firstName} {auth.user?.lastName}</h3>
+              <p className="text-sm text-gray-600">{auth.user?.email}</p>
+              <p className="text-xs text-gray-500">ID: {auth.user?.userId}</p>
             </div>
-            {/* Edit overlap button could go here */}
+            
+            <nav className="space-y-2">
+              <button 
+                onClick={() => setActiveTab('profile')}
+                className={`w-full text-left px-4 py-2 rounded ${activeTab === 'profile' ? 'bg-accent text-white' : 'hover:bg-gray-100'}`}
+              >
+                Edit Profile
+              </button>
+              <button 
+                onClick={() => setActiveTab('picture')}
+                className={`w-full text-left px-4 py-2 rounded ${activeTab === 'picture' ? 'bg-accent text-white' : 'hover:bg-gray-100'}`}
+              >
+                Change Picture
+              </button>
+              <button 
+                onClick={() => setActiveTab('address')}
+                className={`w-full text-left px-4 py-2 rounded ${activeTab === 'address' ? 'bg-accent text-white' : 'hover:bg-gray-100'}`}
+              >
+                Edit Address
+              </button>
+            </nav>
           </div>
-
-          <div className="text-center md:text-left">
-            <h1 className="text-3xl font-serif text-[#2B1E16] mb-1">Welcome back, {auth.user.firstName}.</h1>
-            <p className="text-[#8A8A8A]">Manage your orders and personal preferences.</p>
+          
+          {/* Profile Content */}
+          <div className="lg:col-span-3 bg-white rounded-lg shadow p-6">
+            {activeTab === 'profile' && (
+              <div>
+                <h2 className="text-xl font-semibold mb-6">Edit Profile Information</h2>
+                <form onSubmit={handleEditProfile} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">First Name</label>
+                      <input
+                        type="text"
+                        value={editProfileData.firstName}
+                        onChange={(e) => setEditProfileData({...editProfileData, firstName: e.target.value})}
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Last Name</label>
+                      <input
+                        type="text"
+                        value={editProfileData.lastName}
+                        onChange={(e) => setEditProfileData({...editProfileData, lastName: e.target.value})}
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={editProfileData.phone}
+                      onChange={(e) => setEditProfileData({...editProfileData, phone: e.target.value})}
+                      className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email</label>
+                    <input
+                      type="email"
+                      value={auth.user?.email || ''}
+                      className="w-full p-3 border rounded-lg bg-gray-100"
+                      disabled
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-accent/90 transition"
+                  >
+                    Update Profile
+                  </button>
+                </form>
+              </div>
+            )}
+            
+            {activeTab === 'picture' && (
+              <div>
+                <h2 className="text-xl font-semibold mb-6">Change Profile Picture</h2>
+                <div className="text-center mb-6">
+                  <div className="w-32 h-32 bg-accent rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 overflow-hidden">
+                    {auth.user?.profileImage ? (
+                      <img src={auth.user.profileImage} alt="Profile" className="w-32 h-32 rounded-full object-cover" />
+                    ) : (
+                      `${auth.user?.firstName?.[0] || ''}${auth.user?.lastName?.[0] || ''}`
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600">Current Profile Picture</p>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">New Profile Picture URL</label>
+                    <input
+                      type="url"
+                      placeholder="Enter new profile picture URL"
+                      value={profileImageUrl}
+                      onChange={(e) => setProfileImageUrl(e.target.value)}
+                      className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                    />
+                  </div>
+                  <button 
+                    onClick={handleChangeProfilePicture}
+                    className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-accent/90 transition"
+                  >
+                    Update Picture
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'address' && (
+              <div>
+                <h2 className="text-xl font-semibold mb-6">Edit Address</h2>
+                <form onSubmit={handleEditProfile} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Street Address</label>
+                    <input
+                      type="text"
+                      value={editProfileData.address.street}
+                      onChange={(e) => setEditProfileData({...editProfileData, address: {...editProfileData.address, street: e.target.value}})}
+                      className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">City</label>
+                      <input
+                        type="text"
+                        value={editProfileData.address.city}
+                        onChange={(e) => setEditProfileData({...editProfileData, address: {...editProfileData.address, city: e.target.value}})}
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">State</label>
+                      <input
+                        type="text"
+                        value={editProfileData.address.state}
+                        onChange={(e) => setEditProfileData({...editProfileData, address: {...editProfileData.address, state: e.target.value}})}
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">ZIP Code</label>
+                    <input
+                      type="text"
+                      value={editProfileData.address.zipCode}
+                      onChange={(e) => setEditProfileData({...editProfileData, address: {...editProfileData.address, zipCode: e.target.value}})}
+                      className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-accent/90 transition"
+                  >
+                    Update Address
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Tab Navigation */}
-        <div className="flex justify-center md:justify-start gap-2 mb-12 border-b border-[#EEEAE4] pb-1">
-          {[
-            { id: 'overview', label: 'Overview' },
-            { id: 'orders', label: 'Orders' },
-            { id: 'settings', label: 'Settings' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => handleTabChange(tab.id as TabType)}
-              className={`px-6 py-3 rounded-t-lg transition-all text-sm font-medium ${activeTab === tab.id
-                ? 'text-[#2B1E16] border-b-2 border-[#C9A45C] bg-transparent'
-                : 'text-[#8A8A8A] hover:text-[#2B1E16]'
-                }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content Area */}
-        <div className="min-h-[400px]">
-          {activeTab === 'overview' && (
-            <OverviewTab user={auth.user} onNavigate={handleTabChange} />
-          )}
-          {activeTab === 'orders' && (
-            <OrdersTab />
-          )}
-          {activeTab === 'settings' && (
-            <SettingsTab
-              user={auth.user}
-              onUpdateUser={(updatedUser) => {
-                setAuth(prev => ({ ...prev, user: updatedUser }));
-                // also update local state if needed
-              }}
-            />
-          )}
-        </div>
-
       </main>
     </div>
   );

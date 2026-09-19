@@ -7,17 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#2B1E16', // Dark Coffee / Deepest Brown
-        secondary: '#8A8A8A', // Muted Gray
-        accent: '#C9A45C', // Muted Gold
-        cream: '#F7F4EF', // Warm Off-White
-        surface: '#FFFFFF', // Pure white
-        'olive-dark': '#403c17', // Keep for compatibility if needed, or remove if unused
+        primary: '#2C1810', // Deep Chocolate Brown
+        secondary: '#DBC1AC', // Soft Beige/Nude
+        accent: '#C5A059', // Gold
+        olive: '#4A5D23', // Deep Olive/Forest Green
+        cream: '#F5F5F0', // Off-White/Cream/Beige background
+        surface: '#FFFFFF', // Pure white for cards/surfaces
+        muted: '#8D8D8D', // Muted text
       },
       fontFamily: {
         sans: ['Poppins', 'sans-serif'], // Main text
         heading: ['Montserrat', 'sans-serif'], // Headings
-        serif: ['Playfair Display', 'serif'], // Elegant serif for titles
       },
       backgroundImage: {
         'hero-pattern': "url('/assets/hero-bg.jpg')", // Placeholder

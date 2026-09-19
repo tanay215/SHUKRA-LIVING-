@@ -39,6 +39,15 @@ const HomePage: React.FC = () => {
   });
 
   // Load Data
+  useEffect(() => {
+    loadUserProfile();
+    loadSiteSettings();
+
+    // Auto-refresh settings
+    const settingsInterval = setInterval(loadSiteSettings, 30000);
+    return () => clearInterval(settingsInterval);
+  }, []);
+
   const loadUserProfile = async () => {
     try {
       const token = AuthUtils.getToken();
@@ -65,16 +74,6 @@ const HomePage: React.FC = () => {
       console.error('Failed to load settings:', error);
     }
   };
-
-
-  useEffect(() => {
-    loadUserProfile();
-    loadSiteSettings();
-
-    // Auto-refresh settings
-    const settingsInterval = setInterval(loadSiteSettings, 30000);
-    return () => clearInterval(settingsInterval);
-  }, []);
 
   // Cart Logic
   const addToCart = (product: any) => {
@@ -172,7 +171,7 @@ const HomePage: React.FC = () => {
       />
 
       <main className="flex-grow">
-        <Hero />
+        <Hero user={auth.user} />
         <Features />
         <Philosophy />
         <Categories addToCart={addToCart} />

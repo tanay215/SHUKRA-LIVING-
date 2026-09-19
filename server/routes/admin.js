@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
   try {
     const { adminId, password } = req.body;
-
+    
     console.log('🔑 Admin login attempt:', { adminId, hasPassword: !!password });
 
     if (!adminId || !password) {
@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = generateToken('admin', '24h');
-
+    
     console.log('✅ Admin login successful');
 
     res.json({
@@ -54,7 +54,7 @@ const adminAuth = (req, res, next) => {
     if (!token) {
       return res.status(401).json({ error: 'Access denied' });
     }
-
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.userId === 'admin') {
       req.admin = { id: 'admin', role: 'admin' };
@@ -77,13 +77,13 @@ const adminAuth = (req, res, next) => {
 router.get('/products', adminAuth, async (req, res) => {
   try {
     console.log('🔍 Admin fetching products...');
-
+    
     const { default: dataConsistencyService } = await import('../services/dataConsistencyService.js');
     await dataConsistencyService.ensureDataConsistency();
-
+    
     const products = await Product.find().sort({ createdAt: -1 });
     console.log(`✅ Admin found ${products.length} products`);
-
+    
     if (products.length === 0) {
       console.log('⚠️ No products found, forcing data restoration...');
       await dataConsistencyService.ensureDataConsistency();
@@ -91,7 +91,7 @@ router.get('/products', adminAuth, async (req, res) => {
       console.log(`🔄 Restored ${restoredProducts.length} products`);
       return res.json(restoredProducts);
     }
-
+    
     res.json(products);
   } catch (error) {
     console.error('❌ Admin products error:', error);
@@ -102,7 +102,7 @@ router.get('/products', adminAuth, async (req, res) => {
 router.post('/products', adminAuth, async (req, res) => {
   try {
     console.log('📦 Creating new product...');
-
+    
     const productData = {
       title: req.body.title,
       description: req.body.description,
@@ -111,12 +111,12 @@ router.post('/products', adminAuth, async (req, res) => {
       stock: req.body.stock !== undefined ? Number(req.body.stock) : 10,
       isActive: true
     };
-
+    
     if (req.body.originalPrice) productData.originalPrice = Number(req.body.originalPrice);
     if (req.body.images && req.body.images[0]?.url) {
       productData.images = [{ url: req.body.images[0].url, alt: req.body.title }];
     }
-
+    
     if (req.body.supplier) {
       if (typeof req.body.supplier === 'object' && req.body.supplier.name) {
         productData.supplier = {
@@ -129,7 +129,7 @@ router.post('/products', adminAuth, async (req, res) => {
         };
       }
     }
-
+    
     if (req.body.specifications) {
       productData.specifications = {
         material: req.body.specifications.material || '',
@@ -143,15 +143,15 @@ router.post('/products', adminAuth, async (req, res) => {
         warranty: req.body.specifications.warranty || ''
       };
     }
-
+    
     productData.rating = { average: 0, count: 0 };
     productData.purchasesLastMonth = 0;
     productData.deliveryDays = 7;
     productData.paymentOptions = ['COD', 'Card'];
-
+    
     const product = new Product(productData);
     await product.save();
-
+    
     console.log('✅ Product created successfully:', product._id);
     res.status(201).json({ message: 'Product created successfully', product });
   } catch (error) {
@@ -169,12 +169,12 @@ router.put('/products/:id', adminAuth, async (req, res) => {
       category: req.body.category || 'Living',
       stock: req.body.stock !== undefined ? Number(req.body.stock) : 10
     };
-
+    
     if (req.body.originalPrice) updateData.originalPrice = Number(req.body.originalPrice);
     if (req.body.images && req.body.images[0]?.url) {
       updateData.images = req.body.images;
     }
-
+    
     if (req.body.supplier && typeof req.body.supplier === 'object' && req.body.supplier.name) {
       updateData.supplier = {
         name: req.body.supplier.name,
@@ -185,7 +185,7 @@ router.put('/products/:id', adminAuth, async (req, res) => {
         contact: req.body.supplier.contact || ''
       };
     }
-
+    
     if (req.body.specifications) {
       updateData.specifications = {
         material: req.body.specifications.material || '',
@@ -199,17 +199,17 @@ router.put('/products/:id', adminAuth, async (req, res) => {
         warranty: req.body.specifications.warranty || ''
       };
     }
-
+    
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true, runValidators: true }
     );
-
+    
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
-
+    
     res.json({ message: 'Product updated successfully', product });
   } catch (error) {
     console.error('Update product error:', error);
@@ -238,7 +238,7 @@ router.get('/dashboard', adminAuth, async (req, res) => {
   try {
     const { default: dataConsistencyService } = await import('../services/dataConsistencyService.js');
     await dataConsistencyService.ensureDataConsistency();
-
+    
     const totalProducts = await Product.countDocuments({ isActive: true });
     const totalUsers = await User.countDocuments();
     const totalOrders = await Order.countDocuments();
@@ -278,11 +278,11 @@ router.get('/orders/:id', adminAuth, async (req, res) => {
     const order = await Order.findById(req.params.id)
       .populate('user', 'firstName lastName email phone userId createdAt')
       .populate('items.product');
-
+    
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
-
+    
     res.json(order);
   } catch (error) {
     console.error('Get order error:', error);
@@ -293,23 +293,23 @@ router.get('/orders/:id', adminAuth, async (req, res) => {
 router.put('/orders/:id', adminAuth, async (req, res) => {
   try {
     const { orderStatus, estimatedDelivery } = req.body;
-
+    
     const currentOrder = await Order.findById(req.params.id);
-
+    
     if (!currentOrder) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
     let updateData = {};
-
+    
     if (orderStatus) {
       updateData.orderStatus = orderStatus;
-
+      
       if (orderStatus === 'Cancelled') {
         if (currentOrder.paymentStatus === 'Paid') {
           updateData.paymentStatus = 'Refunded';
         }
-
+        
         for (const item of currentOrder.items) {
           await Product.findByIdAndUpdate(
             item.product,
@@ -318,7 +318,7 @@ router.put('/orders/:id', adminAuth, async (req, res) => {
           );
         }
       }
-
+      
       if (orderStatus === 'Delivered' && (currentOrder.paymentMethod === 'COD' || currentOrder.paymentMethod === 'cod')) {
         if (currentOrder.paymentStatus === 'Pending') {
           updateData.paymentStatus = 'Paid';
@@ -326,18 +326,18 @@ router.put('/orders/:id', adminAuth, async (req, res) => {
         updateData.deliveredAt = new Date();
       }
     }
-
+    
     if (estimatedDelivery) {
       updateData.estimatedDelivery = new Date(estimatedDelivery);
     }
-
+    
     const order = await Order.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true, runValidators: true }
     ).populate('user', 'firstName lastName email phone userId')
-      .populate('items.product');
-
+     .populate('items.product');
+    
     res.json({ message: 'Order updated successfully', order });
   } catch (error) {
     console.error('Update order error:', error);
@@ -378,7 +378,7 @@ router.put('/settings', adminAuth, async (req, res) => {
     if (!settings) {
       settings = new Settings();
     }
-
+    
     if (req.body.freeDeliveryThreshold !== undefined) {
       settings.freeDeliveryThreshold = Math.max(0, Number(req.body.freeDeliveryThreshold));
     }
@@ -391,19 +391,13 @@ router.put('/settings', adminAuth, async (req, res) => {
     if (req.body.discountType) {
       settings.discountType = req.body.discountType;
     }
-    if (req.body.philosophy) {
-      settings.philosophy = {
-        ...settings.philosophy,
-        ...req.body.philosophy
-      };
-    }
-
+    
     await settings.save();
-
+    
     console.log('✅ Settings updated');
-
-    res.json({
-      message: 'Settings updated successfully',
+    
+    res.json({ 
+      message: 'Settings updated successfully', 
       settings,
       timestamp: new Date().toISOString()
     });
@@ -416,15 +410,15 @@ router.put('/settings', adminAuth, async (req, res) => {
 router.post('/restore-products', adminAuth, async (req, res) => {
   try {
     console.log('🌱 Restoring products...');
-
+    
     const { default: dataConsistencyService } = await import('../services/dataConsistencyService.js');
     const result = await dataConsistencyService.ensureDataConsistency();
     const products = await Product.find({ isActive: true }).sort({ createdAt: -1 });
-
-    res.json({
-      message: 'Products restored successfully',
+    
+    res.json({ 
+      message: 'Products restored successfully', 
       count: products.length,
-      products
+      products 
     });
   } catch (error) {
     console.error('❌ Restore products error:', error);
@@ -451,7 +445,7 @@ router.put('/products/:id/return-policy', adminAuth, async (req, res) => {
 
     await product.save();
 
-    res.json({
+    res.json({ 
       message: 'Return policy updated successfully',
       returnPolicy: product.returnPolicy
     });
@@ -489,20 +483,20 @@ router.put('/returns/:orderId', adminAuth, async (req, res) => {
 
     order.returnRequest.status = status;
     if (adminNotes) order.returnRequest.adminNotes = adminNotes;
-
+    
     if (status === 'approved' && scheduledPickupDate) {
       order.returnRequest.scheduledPickupDate = new Date(scheduledPickupDate);
       console.log('Setting pickup date:', scheduledPickupDate, 'as Date:', new Date(scheduledPickupDate));
     }
-
+    
     if (status === 'collected') {
       order.returnRequest.collectedAt = new Date();
     }
-
+    
     if (status === 'completed') {
       order.returnRequest.refundAmount = refundAmount || order.totalAmount;
       order.returnRequest.refundedAt = new Date();
-
+      
       // Update inventory
       for (const item of order.items) {
         const product = await Product.findById(item.product._id);
@@ -515,7 +509,7 @@ router.put('/returns/:orderId', adminAuth, async (req, res) => {
 
     await order.save();
 
-    res.json({
+    res.json({ 
       message: 'Return request updated successfully',
       returnRequest: order.returnRequest
     });
@@ -534,7 +528,7 @@ router.put('/returns/:orderId', adminAuth, async (req, res) => {
 router.get('/coupons', adminAuth, catchAsync(async (req, res) => {
   const { active } = req.query;
   const filter = {};
-
+  
   if (active !== undefined) {
     filter.isActive = active === 'true';
   }
@@ -549,7 +543,7 @@ router.get('/coupons', adminAuth, catchAsync(async (req, res) => {
  */
 router.get('/coupons/:id', adminAuth, catchAsync(async (req, res) => {
   const coupon = await Coupon.findById(req.params.id);
-
+  
   if (!coupon) {
     throw new AppError('Coupon not found', 404);
   }
@@ -612,7 +606,7 @@ router.post('/coupons', adminAuth, catchAsync(async (req, res) => {
  */
 router.put('/coupons/:id', adminAuth, catchAsync(async (req, res) => {
   const coupon = await Coupon.findById(req.params.id);
-
+  
   if (!coupon) {
     throw new AppError('Coupon not found', 404);
   }
@@ -655,7 +649,7 @@ router.put('/coupons/:id', adminAuth, catchAsync(async (req, res) => {
  */
 router.delete('/coupons/:id', adminAuth, catchAsync(async (req, res) => {
   const coupon = await Coupon.findById(req.params.id);
-
+  
   if (!coupon) {
     throw new AppError('Coupon not found', 404);
   }

@@ -10,12 +10,7 @@ const AdminSettings: React.FC = () => {
     freeDeliveryThreshold: 50000,
     deliveryCharge: 500,
     globalDiscount: 0,
-    discountType: 'percentage',
-    philosophy: {
-      title: '',
-      content: '',
-      imageUrl: ''
-    }
+    discountType: 'percentage'
   });
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +41,7 @@ const AdminSettings: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('Settings saved successfully!');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Save settings error:', error);
       alert('Failed to save settings: ' + (error.response?.data?.error || error.message));
     } finally {
@@ -67,7 +62,7 @@ const AdminSettings: React.FC = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <h1 className="text-2xl font-heading font-bold text-accent">Site Settings</h1>
           <div className="flex items-center space-x-4">
-            <button
+            <button 
               onClick={() => navigate('/admin/dashboard')}
               className="text-accent hover:underline"
             >
@@ -79,43 +74,43 @@ const AdminSettings: React.FC = () => {
           </div>
         </div>
       </header>
-
+      
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-6">Site Configuration</h2>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-2">Free Delivery Threshold (₹)</label>
               <input
                 type="number"
                 value={siteSettings.freeDeliveryThreshold}
-                onChange={(e) => setSiteSettings({ ...siteSettings, freeDeliveryThreshold: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setSiteSettings({...siteSettings, freeDeliveryThreshold: parseInt(e.target.value) || 0})}
                 className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
                 placeholder="50000"
               />
               <p className="text-xs text-gray-500 mt-1">Orders above this amount get free delivery</p>
             </div>
-
+            
             <div>
               <label className="block text-sm font-medium mb-2">Delivery Charge (₹)</label>
               <input
                 type="number"
                 value={siteSettings.deliveryCharge}
-                onChange={(e) => setSiteSettings({ ...siteSettings, deliveryCharge: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setSiteSettings({...siteSettings, deliveryCharge: parseInt(e.target.value) || 0})}
                 className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
                 placeholder="500"
               />
               <p className="text-xs text-gray-500 mt-1">Standard delivery charge for orders below threshold</p>
             </div>
-
+            
             <div>
               <label className="block text-sm font-medium mb-2">Global Discount</label>
               <div className="flex gap-2">
                 <input
                   type="number"
                   value={siteSettings.globalDiscount}
-                  onChange={(e) => setSiteSettings({ ...siteSettings, globalDiscount: parseInt(e.target.value) || 0 })}
+                  onChange={(e) => setSiteSettings({...siteSettings, globalDiscount: parseInt(e.target.value) || 0})}
                   className="flex-1 p-3 border rounded-lg focus:outline-none focus:border-accent"
                   placeholder="0"
                   min="0"
@@ -123,7 +118,7 @@ const AdminSettings: React.FC = () => {
                 />
                 <select
                   value={siteSettings.discountType}
-                  onChange={(e) => setSiteSettings({ ...siteSettings, discountType: e.target.value })}
+                  onChange={(e) => setSiteSettings({...siteSettings, discountType: e.target.value})}
                   className="p-3 border rounded-lg focus:outline-none focus:border-accent"
                 >
                   <option value="percentage">%</option>
@@ -131,13 +126,13 @@ const AdminSettings: React.FC = () => {
                 </select>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {siteSettings.discountType === 'percentage'
+                {siteSettings.discountType === 'percentage' 
                   ? 'Percentage discount on all products (0-100%)'
                   : 'Fixed amount discount on all products'
                 }
               </p>
             </div>
-
+            
             <div>
               <label className="block text-sm font-medium mb-2">Site Status</label>
               <select
@@ -150,43 +145,7 @@ const AdminSettings: React.FC = () => {
               <p className="text-xs text-gray-500 mt-1">Control site availability</p>
             </div>
           </div>
-
-          {/* Philosophy Section */}
-          <div className="mt-8 border-t pt-6">
-            <h3 className="font-semibold mb-4 text-lg">Philosophy Section</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Title</label>
-                <input
-                  type="text"
-                  value={siteSettings.philosophy?.title || ''}
-                  onChange={(e) => setSiteSettings({ ...siteSettings, philosophy: { ...siteSettings.philosophy, title: e.target.value } })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
-                  placeholder="Our Philosophy"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Content</label>
-                <textarea
-                  value={siteSettings.philosophy?.content || ''}
-                  onChange={(e) => setSiteSettings({ ...siteSettings, philosophy: { ...siteSettings.philosophy, content: e.target.value } })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent h-32"
-                  placeholder="Philosophy description..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Image URL</label>
-                <input
-                  type="text"
-                  value={siteSettings.philosophy?.imageUrl || ''}
-                  onChange={(e) => setSiteSettings({ ...siteSettings, philosophy: { ...siteSettings.philosophy, imageUrl: e.target.value } })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:border-accent"
-                  placeholder="https://..."
-                />
-              </div>
-            </div>
-          </div>
-
+          
           {/* Preview Section */}
           <div className="mt-8 p-4 bg-gray-50 rounded-lg">
             <h3 className="font-semibold mb-4">Settings Preview</h3>
@@ -202,10 +161,10 @@ const AdminSettings: React.FC = () => {
                 {siteSettings.discountType === 'percentage' ? '%' : '₹'} off all products
               </div>
               <div>
-                <strong>Example:</strong>
+                <strong>Example:</strong> 
                 {siteSettings.globalDiscount > 0 ? (
                   <span className="ml-1">
-                    ₹10,000 → ₹{siteSettings.discountType === 'percentage'
+                    ₹10,000 → ₹{siteSettings.discountType === 'percentage' 
                       ? (10000 - (10000 * siteSettings.globalDiscount / 100)).toLocaleString('en-IN')
                       : Math.max(0, 10000 - siteSettings.globalDiscount).toLocaleString('en-IN')
                     }
@@ -216,8 +175,8 @@ const AdminSettings: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <button
+          
+          <button 
             onClick={saveSettings}
             disabled={loading}
             className="mt-6 w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-accent/90 transition disabled:opacity-50"
@@ -225,39 +184,39 @@ const AdminSettings: React.FC = () => {
             {loading ? 'Saving Settings...' : 'Save Settings'}
           </button>
         </div>
-
+        
         {/* Additional Settings */}
         <div className="bg-white rounded-lg shadow p-6 mt-6">
           <h2 className="text-xl font-semibold mb-6">Advanced Settings</h2>
-
+          
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium mb-2">Admin Credentials</label>
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800">
-                  <strong>Current Admin ID:</strong> admin123<br />
+                  <strong>Current Admin ID:</strong> admin123<br/>
                   <strong>Note:</strong> Admin credentials are configured in environment variables for security.
                 </p>
               </div>
             </div>
-
+            
             <div>
               <label className="block text-sm font-medium mb-2">Database Status</label>
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-sm text-green-800">
-                  ✅ MongoDB Atlas Connected<br />
-                  📊 Database: shukra_living<br />
+                  ✅ MongoDB Atlas Connected<br/>
+                  📊 Database: shukra_living<br/>
                   🔗 Cluster: shukra-cluster
                 </p>
               </div>
             </div>
-
+            
             <div>
               <label className="block text-sm font-medium mb-2">System Information</label>
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  🚀 Server: Running on Port 30011<br />
-                  🌐 Environment: development<br />
+                  🚀 Server: Running on Port 30011<br/>
+                  🌐 Environment: development<br/>
                   📧 Email Service: Configured with Gmail SMTP
                 </p>
               </div>

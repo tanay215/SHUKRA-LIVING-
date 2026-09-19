@@ -1,73 +1,65 @@
-import { useState, useEffect } from 'react';
-import { Star } from 'lucide-react';
+import React from 'react';
+import { Star, Quote } from 'lucide-react';
+
+const testimonials = [
+    {
+        name: "Sarah Jenkins",
+        role: "Interior Designer",
+        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop",
+        content: "The craftsmanship is unparalleled. I've used Shukra Living pieces in three of my recent projects and my clients are always thrilled.",
+        rating: 5
+    },
+    {
+        name: "Michael Chen",
+        role: "Homeowner",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop",
+        content: "Absolutely in love with my new dining set. The wood quality is amazing and it was delivered earlier than expected.",
+        rating: 5
+    },
+    {
+        name: "Emma Wilson",
+        role: "Architect",
+        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop",
+        content: "Minimalist perfection. It's rare to find furniture that balances aesthetics and functionality so well.",
+        rating: 5
+    }
+];
 
 const Testimonials = () => {
-    const [testimonials, setTestimonials] = useState<any[]>([]);
-
-    useEffect(() => {
-        // For the high-fidelity UI, we use curated testimonials to ensure 
-        // the aesthetic matches the luxury brand identity.
-        // In production, this would fetch verified reviews.
-        // const fetchTestimonials = async () => { ... }
-
-        setTestimonials([
-            {
-                user: { firstName: "Sarah", lastName: "Jenkins", profileImage: null },
-                role: "Interior Designer",
-                image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop", // Updated image
-                comment: "The craftsmanship is unparalleled. I've used Shukra Living pieces in three of my recent projects and my clients are always thrilled.",
-                rating: 5
-            },
-            {
-                user: { firstName: "Michael", lastName: "Chen", profileImage: null },
-                role: "Homeowner",
-                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop",
-                comment: "Absolutely in love with my new dining set. The wood quality is amazing and it was delivered earlier than expected.",
-                rating: 5
-            },
-            {
-                user: { firstName: "Emma", lastName: "Wilson", profileImage: null },
-                role: "Architect",
-                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop",
-                comment: "Minimalist perfection. It's rare to find furniture that balances aesthetics and functionality so well.",
-                rating: 5
-            }
-        ]);
-    }, []);
-
     return (
-        <section className="py-32 bg-gray-50 relative overflow-hidden">
+        <section className="py-24 bg-cream relative overflow-hidden">
+            {/* Decorative Background Elements */}
+            <div className="absolute top-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+
             <div className="container mx-auto px-6 relative z-10">
-                <div className="text-center mb-20">
-                    <h4 className="text-secondary font-sans font-medium tracking-[0.2em] uppercase text-xs mb-4">Testimonials</h4>
-                    <h2 className="text-4xl lg:text-5xl font-serif text-primary">Client <span className="italic text-accent">Stories</span></h2>
+                <div className="text-center mb-16">
+                    <h4 className="text-olive font-medium tracking-[0.2em] uppercase text-xs mb-3">Testimonials</h4>
+                    <h2 className="text-4xl font-heading font-bold text-primary">Words from our <span className="italic font-light text-accent">Clients</span></h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {testimonials.map((item, index) => (
-                        <div key={index} className="bg-white p-12 rounded-sm relative group hover:-translate-y-2 transition-transform duration-500 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.1)] border border-gray-100/50">
+                        <div key={index} className="bg-olive text-white p-10 rounded-[2rem] relative group hover:transform hover:-translate-y-2 transition-all duration-300 shadow-xl shadow-olive/20">
+                            <Quote className="absolute top-8 right-8 w-12 h-12 text-white/5 group-hover:text-white/10 transition-colors" />
+
                             <div className="flex gap-1 mb-6 text-accent">
                                 {[...Array(item.rating)].map((_, i) => (
-                                    <Star key={i} size={14} className="fill-current" />
+                                    <Star key={i} className="w-4 h-4 fill-current" />
                                 ))}
                             </div>
 
-                            <p className="text-secondary text-lg leading-relaxed mb-8 font-light italic">"{item.comment || item.content}"</p>
+                            <p className="text-lg font-light leading-relaxed mb-8 text-gray-200">"{item.content}"</p>
 
-                            <div className="flex items-center gap-4 mt-auto">
+                            <div className="flex items-center gap-4">
                                 <img
-                                    src={item.user?.profileImage || item.image || "https://via.placeholder.com/150"}
-                                    alt={item.user?.firstName || item.name}
-                                    className="w-10 h-10 rounded-full object-cover filter grayscale group-hover:grayscale-0 transition-all"
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-white/10"
                                 />
                                 <div>
-                                    <h5 className="font-serif text-primary text-sm font-medium">
-                                        {item.user?.firstName} {item.user?.lastName || ''}
-                                        {item.name ? item.name : ''}
-                                    </h5>
-                                    <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-0.5">
-                                        {item.verified ? 'Verified Buyer' : (item.role || 'Customer')}
-                                    </p>
+                                    <h5 className="font-heading font-bold text-white text-sm tracking-wide">{item.name}</h5>
+                                    <p className="text-xs text-gray-400 uppercase tracking-widest">{item.role}</p>
                                 </div>
                             </div>
                         </div>

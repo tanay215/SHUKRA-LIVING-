@@ -5,32 +5,10 @@ import { AuthUtils } from '../../utils/auth';
 
 const API_BASE_URL = 'http://localhost:30011/api';
 
-// Define interfaces for better type safety
-interface Product {
-  _id: string;
-  title: string;
-  price: number;
-  category: string;
-  stock: number;
-  images: { url: string }[];
-  isActive: boolean;
-}
-
-interface Order {
-  _id: string;
-  orderStatus: string;
-  totalAmount: number;
-  createdAt: string;
-  returnRequest?: {
-    isRequested: boolean;
-    status: string;
-  };
-}
-
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -46,17 +24,17 @@ const AdminDashboard: React.FC = () => {
         handleLogout();
         return;
       }
-
+      
       const response = await axios.get(`${API_BASE_URL}/admin/products`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(response.data || []);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to load products:', error);
       // Only logout on specific auth errors, not network/server errors
-      if (error.response?.status === 401 &&
-        (error.response?.data?.error === 'Invalid token' ||
-          error.response?.data?.error === 'Access denied')) {
+      if (error.response?.status === 401 && 
+          (error.response?.data?.error === 'Invalid token' || 
+           error.response?.data?.error === 'Access denied')) {
         handleLogout();
       }
       setProducts([]);
@@ -72,17 +50,17 @@ const AdminDashboard: React.FC = () => {
         handleLogout();
         return;
       }
-
+      
       const response = await axios.get(`${API_BASE_URL}/admin/orders`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setOrders(response.data);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to load orders:', error);
       // Only logout on specific auth errors, not network/server errors
-      if (error.response?.status === 401 &&
-        (error.response?.data?.error === 'Invalid token' ||
-          error.response?.data?.error === 'Access denied')) {
+      if (error.response?.status === 401 && 
+          (error.response?.data?.error === 'Invalid token' || 
+           error.response?.data?.error === 'Access denied')) {
         handleLogout();
       }
     }
@@ -94,7 +72,7 @@ const AdminDashboard: React.FC = () => {
     alert('Logged out successfully');
   };
 
-  const deleteProduct = async (productId: string) => {
+  const deleteProduct = async (productId) => {
     if (confirm('Are you sure you want to delete this product?')) {
       try {
         const token = AuthUtils.getToken();
@@ -103,13 +81,13 @@ const AdminDashboard: React.FC = () => {
           navigate('/admin/login');
           return;
         }
-
+        
         await axios.delete(`${API_BASE_URL}/admin/products/${productId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         loadProducts();
         alert('Product deleted successfully!');
-      } catch (error: any) {
+      } catch (error) {
         console.error('Delete product error:', error);
         alert('Failed to delete product: ' + (error.response?.data?.error || error.message));
       }
@@ -122,49 +100,31 @@ const AdminDashboard: React.FC = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <h1 className="text-2xl font-heading font-bold text-accent">Admin Dashboard</h1>
           <div className="flex items-center space-x-4">
-            <button
+            <button 
               onClick={() => navigate('/admin/products')}
               className="bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90"
             >
               Manage Products
             </button>
-            <button
+            <button 
               onClick={() => navigate('/admin/orders')}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
               Manage Orders ({orders.filter(o => o.orderStatus === 'Placed').length})
             </button>
-            <button
-              onClick={() => navigate('/admin/coupons')}
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
-            >
-              Coupons
-            </button>
-            <button
-              onClick={() => navigate('/admin/testimonials')}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-            >
-              Testimonials
-            </button>
-            <button
-              onClick={() => navigate('/admin/messages')}
-              className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700"
-            >
-              Messages
-            </button>
-            <button
+            <button 
               onClick={() => navigate('/admin/orders')}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
             >
               Return Requests ({orders.filter(o => o.returnRequest?.isRequested && o.returnRequest?.status === 'pending').length})
             </button>
-            <button
+            <button 
               onClick={() => navigate('/admin/settings')}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             >
               Settings
             </button>
-            <button
+            <button 
               onClick={() => navigate('/admin/analytics')}
               className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
             >
@@ -176,7 +136,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
       </header>
-
+      
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
@@ -200,12 +160,12 @@ const AdminDashboard: React.FC = () => {
             <p className="text-3xl font-bold text-green-600">₹{orders.filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString()).reduce((sum, o) => sum + (o.totalAmount || 0), 0).toLocaleString('en-IN')}</p>
           </div>
         </div>
-
+        
         <div className="bg-white rounded-lg shadow">
           <div className="p-6 border-b">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Product Management</h2>
-              <button
+              <button 
                 onClick={() => navigate('/admin/products')}
                 className="bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90"
               >
@@ -249,13 +209,13 @@ const AdminDashboard: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm space-x-2">
-                      <button
+                      <button 
                         onClick={() => navigate('/admin/products')}
                         className="text-accent hover:text-accent/70"
                       >
                         Edit
                       </button>
-                      <button
+                      <button 
                         onClick={() => deleteProduct(product._id)}
                         className="text-red-600 hover:text-red-800"
                       >

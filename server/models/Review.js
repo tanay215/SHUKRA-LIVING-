@@ -4,16 +4,13 @@ const reviewSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false
+    required: true
   },
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
-    required: false
+    required: true
   },
-  // For manual testimonials
-  customerName: String,
-  customerRole: String,
   rating: {
     type: Number,
     required: true,
@@ -45,10 +42,6 @@ const reviewSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  isTestimonial: {
-    type: Boolean,
-    default: false
-  },
   images: [{
     url: String,
     alt: String
@@ -70,23 +63,17 @@ reviewSchema.index({ rating: -1 });
 reviewSchema.index({ verified: 1 });
 
 // Compound index to prevent duplicate reviews
-reviewSchema.index({ user: 1, product: 1 }, {
-  unique: true,
-  partialFilterExpression: {
-    user: { $type: "objectId" },
-    product: { $type: "objectId" }
-  }
-});
+reviewSchema.index({ user: 1, product: 1 }, { unique: true });
 
 // Methods
-reviewSchema.methods.markHelpful = function (userId) {
+reviewSchema.methods.markHelpful = function(userId) {
   if (!this.helpfulBy.includes(userId)) {
     this.helpfulBy.push(userId);
     this.helpful += 1;
   }
 };
 
-reviewSchema.methods.unmarkHelpful = function (userId) {
+reviewSchema.methods.unmarkHelpful = function(userId) {
   const index = this.helpfulBy.indexOf(userId);
   if (index > -1) {
     this.helpfulBy.splice(index, 1);

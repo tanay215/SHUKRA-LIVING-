@@ -15,13 +15,6 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-empty': 'off',
-      'react-hooks/exhaustive-deps': 'off',
-      'react-hooks/set-state-in-effect': 'off'
-    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

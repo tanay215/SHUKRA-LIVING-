@@ -29,7 +29,7 @@ export const useAuthState = (): AuthContextType => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-
+    
     if (token && userData) {
       try {
         const user = JSON.parse(userData);
@@ -50,24 +50,28 @@ export const useAuthState = (): AuthContextType => {
   }, []);
 
   const login = async (credentials: { userId: string; password: string }) => {
-    const response = await authAPI.login(credentials);
-    const { token, user } = response.data;
-
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-
-    setAuthState({
-      user,
-      token,
-      isAuthenticated: true,
-      isLoading: false,
-    });
+    try {
+      const response = await authAPI.login(credentials);
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      setAuthState({
+        user,
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
+    
     setAuthState({
       user: null,
       token: null,
@@ -80,7 +84,7 @@ export const useAuthState = (): AuthContextType => {
     if (authState.user) {
       const updatedUser = { ...authState.user, ...userData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
-
+      
       setAuthState(prev => ({
         ...prev,
         user: updatedUser,

@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
-import type { User } from '../types';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
@@ -14,7 +13,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -37,7 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const storedToken = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
-
+        
         if (storedToken && storedUser) {
           const parsedUser = JSON.parse(storedUser);
           setToken(storedToken);

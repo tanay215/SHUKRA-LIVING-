@@ -88,52 +88,29 @@ const ContactPage: React.FC = () => {
                                 <p className="text-sm text-gray-300">We'd love to hear from you.</p>
                             </div>
 
-                            <form onSubmit={async (e) => {
-                                e.preventDefault();
-                                const form = e.target as HTMLFormElement;
-                                const formData = new FormData(form);
-                                const data = {
-                                    name: formData.get('name'),
-                                    email: formData.get('email'),
-                                    message: formData.get('message')
-                                };
-
-                                try {
-                                    await axios.post(`${API_BASE_URL}/contacts`, data);
-                                    alert('Message sent successfully! We will get back to you soon.');
-                                    form.reset();
-                                } catch (error) {
-                                    alert('Failed to send message. Please try again.');
-                                }
-                            }} className="space-y-4">
+                            <form className="space-y-4">
                                 <div className="space-y-1">
                                     <label className="text-xs uppercase tracking-wider text-gray-400 ml-1">Full Name</label>
                                     <input
-                                        name="name"
                                         type="text"
-                                        required
                                         className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent focus:bg-black/40 transition-all font-light"
                                     />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-xs uppercase tracking-wider text-gray-400 ml-1">Email Address</label>
                                     <input
-                                        name="email"
                                         type="email"
-                                        required
                                         className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent focus:bg-black/40 transition-all font-light"
                                     />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-xs uppercase tracking-wider text-gray-400 ml-1">Message</label>
                                     <textarea
-                                        name="message"
-                                        required
                                         rows={3}
                                         className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-accent focus:bg-black/40 transition-all font-light resize-none"
                                     />
                                 </div>
-                                <button type="submit" className="w-full bg-secondary text-primary hover:bg-white hover:shadow-lg hover:shadow-white/10 font-bold py-4 rounded-lg transition-all duration-300 tracking-widest uppercase text-sm mt-2">
+                                <button type="button" onClick={() => alert('Message Sent!')} className="w-full bg-secondary text-primary hover:bg-white hover:shadow-lg hover:shadow-white/10 font-bold py-4 rounded-lg transition-all duration-300 tracking-widest uppercase text-sm mt-2">
                                     Send Message
                                 </button>
                             </form>

@@ -45,24 +45,33 @@ const Categories: React.FC<CategoriesProps> = ({ addToCart }) => {
             )
         );
 
+    // Limit to 4 products for the home page display if filtered list is too long?
+    // The user didn't ask to limit, but the design shows a grid of 4. 
+    // Usually "Curated Categories" shows a subset. 
+    // I will show up to 8 items to keep it clean but populate the grid. 
+    // Actually the image shows 4. Let's stick to 4 or 8.
+    // The previous hardcoded list had 4. I'll slice(0, 4) to maintain the layout unless the user clicks "View All".
+    // Wait, the "View All Categories" button implies there's more.
+    // I'll show 4 items per category for this section.
+
     const displayProducts = filteredProducts.slice(0, 4);
 
     return (
-        <section className="py-24 bg-white relative">
+        <section className="py-20 bg-white">
             <div className="container mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                <div className="flex justify-between items-end mb-12">
                     <div>
-                        <h4 className="text-accent/80 font-sans font-medium tracking-[0.2em] uppercase text-xs mb-4">Our Collection</h4>
-                        <h2 className="text-4xl md:text-5xl font-serif text-primary leading-tight">Curated Categories</h2>
+                        <h4 className="text-secondary font-medium tracking-[0.2em] uppercase text-xs mb-2">Our Collection</h4>
+                        <h2 className="text-4xl font-heading font-bold text-primary">Curated Categories</h2>
                     </div>
-                    <div className="flex flex-wrap gap-2 md:gap-4">
+                    <div className="hidden md:flex gap-4">
                         {categories.map((category) => (
                             <button
                                 key={category.id}
                                 onClick={() => setActiveCategory(category.id)}
-                                className={`px-5 py-2 rounded-full text-[10px] md:text-xs tracking-widest uppercase transition-all duration-300 border ${activeCategory === category.id
-                                    ? 'bg-primary text-white border-primary'
-                                    : 'bg-transparent text-gray-500 border-gray-200 hover:border-primary/50 hover:text-primary'
+                                className={`px-6 py-2 rounded-full text-xs tracking-widest uppercase transition-all duration-300 ${activeCategory === category.id
+                                    ? 'bg-primary text-white'
+                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                                     }`}
                             >
                                 {category.label}
@@ -71,22 +80,16 @@ const Categories: React.FC<CategoriesProps> = ({ addToCart }) => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-                    {displayProducts.map((product) => {
-                        // Override specifically for the watermarked image
-                        const displayImage = product.title && product.title.includes("White Marble Dining Table")
-                            ? "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=800&auto=format&fit=crop"
-                            : (product.images?.[0]?.url || product.image || 'https://via.placeholder.com/400');
-
-                        return (
-                            <div key={product._id} className="group cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
-                                <div className="relative overflow-hidden mb-6 bg-gray-100 aspect-[3/4]">
-                                    <img
-                                        src={displayImage}
-                                        alt={product.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {displayProducts.map((product) => (
+                        <div key={product._id} className="group cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
+                            <div className="relative overflow-hidden rounded-lg aspect-[3/4] mb-6">
+                                <img
+                                    src={product.images?.[0]?.url || product.image || 'https://via.placeholder.com/400'}
+                                    alt={product.title}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -95,40 +98,37 @@ const Categories: React.FC<CategoriesProps> = ({ addToCart }) => {
                                             } else if (!AuthUtils.isAuthenticated()) {
                                                 navigate('/login');
                                             } else {
+                                                // Fallback if addToCart prop isn't passed but user is logged in
+                                                // We might need to manually add to cart here or alert
                                                 alert("Please add to cart from the collection page or product details.");
                                             }
                                         }}
-                                        className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white text-primary px-8 py-3 min-w-[140px] text-xs font-bold uppercase tracking-widest transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 hover:bg-primary hover:text-white shadow-lg"
+                                        className="bg-white text-primary px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-accent hover:text-white"
                                     >
                                         Add to Cart
                                     </button>
                                 </div>
-                                <div className="flex justify-between items-start">
-                                    <div className="space-y-1">
-                                        <h3 className="text-base font-serif text-primary group-hover:text-accent transition-colors duration-300">{product.title}</h3>
-                                        <p className="text-xs text-secondary tracking-wide">₹{(product.price || 0).toLocaleString('en-IN')}</p>
-                                    </div>
-                                    <div className="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center text-primary/50 group-hover:border-accent group-hover:text-accent transition-all duration-300">
-                                        <ArrowUpRight strokeWidth={1} className="w-4 h-4" />
-                                    </div>
-                                </div>
                             </div>
-                        );
-                    })}
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-lg font-heading font-medium text-primary mb-1">{product.title}</h3>
+                                    <p className="text-sm text-gray-500">₹{(product.price || 0).toLocaleString('en-IN')}</p>
+                                </div>
+                                <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300">
+                                    <ArrowUpRight className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                     {displayProducts.length === 0 && (
-                        <div className="col-span-full text-center py-20">
-                            <p className="text-gray-400 font-light text-sm tracking-wide">No products found in this category.</p>
+                        <div className="col-span-full text-center py-10 text-gray-400">
+                            No products found in this category.
                         </div>
                     )}
                 </div>
 
-                <div className="mt-16 text-center">
-                    <button
-                        onClick={() => navigate('/collection')}
-                        className="inline-block border-b border-primary pb-1 text-primary text-xs tracking-[0.2em] uppercase hover:text-accent hover:border-accent transition-all duration-300"
-                    >
-                        View All Categories
-                    </button>
+                <div className="mt-12 text-center md:hidden">
+                    <button className="text-primary border-b border-primary pb-1 text-xs tracking-widest uppercase font-medium" onClick={() => navigate('/collection')}>View All Categories</button>
                 </div>
             </div>
         </section>

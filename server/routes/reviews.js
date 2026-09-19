@@ -32,11 +32,11 @@ const validateReviewMiddleware = (req, res, next) => {
 router.get('/product/:productId', sanitizeInput, async (req, res) => {
   try {
     const { productId } = req.params;
-    const {
-      page = 1,
-      limit = 10,
+    const { 
+      page = 1, 
+      limit = 10, 
       sortBy = 'newest',
-      rating
+      rating 
     } = req.query;
 
     const pageNum = Math.max(1, parseInt(page));
@@ -352,7 +352,7 @@ router.get('/user', authenticate, async (req, res) => {
 async function updateProductRating(productId) {
   try {
     const reviews = await Review.find({ product: productId });
-
+    
     if (reviews.length === 0) {
       await Product.findByIdAndUpdate(productId, {
         'rating.average': 0,
@@ -373,91 +373,5 @@ async function updateProductRating(productId) {
     console.error('Update product rating error:', error);
   }
 }
-
-
-
-// Get testimonials (public)
-router.get('/testimonials/featured', async (req, res) => {
-  try {
-    const testimonials = await Review.find({ isTestimonial: true })
-      .populate('user', 'firstName lastName profileImage')
-      .sort({ createdAt: -1 })
-      .limit(6);
-    res.json(testimonials);
-  } catch (error) {
-    console.error('Get testimonials error:', error);
-    res.status(500).json({ error: 'Failed to fetch testimonials' });
-  }
-});
-
-// Toggle testimonial status (Admin only)
-// Toggle testimonial status (Admin only)
-import { authenticateAdmin } from '../middleware/auth.js';
-
-router.put('/:reviewId/testimonial', authenticateAdmin, async (req, res) => {
-  try {
-    const { reviewId } = req.params;
-    const { isTestimonial } = req.body;
-
-    const review = await Review.findByIdAndUpdate(
-      reviewId,
-      { isTestimonial },
-      { new: true }
-    ).populate('user', 'firstName lastName profileImage');
-
-    if (!review) {
-      return res.status(404).json({ error: 'Review not found' });
-    }
-
-    res.json(review);
-  } catch (error) {
-    console.error('Toggle testimonial error:', error);
-    res.status(500).json({ error: 'Failed to update testimonial status' });
-  }
-});
-
-// Create manual testimonial (Admin only)
-router.post('/testimonials', authenticateAdmin, async (req, res) => {
-  try {
-    const {
-      customerName,
-      customerRole,
-      rating,
-      comment,
-      image
-    } = req.body;
-
-    if (!customerName || !rating || !comment) {
-      return res.status(400).json({ error: 'Name, rating, and comment are required' });
-    }
-
-    const review = new Review({
-      customerName,
-      customerRole: customerRole || 'Customer',
-      rating,
-      comment,
-      title: 'Testimonial', // Default title
-      isTestimonial: true,
-      verified: false, // Manual testimonials aren't verified orders usually
-      images: image ? [{ url: image, alt: customerName }] : []
-    });
-
-    await review.save();
-    res.status(201).json(review);
-  } catch (error) {
-    console.error('Create testimonial error:', error);
-    res.status(500).json({ error: 'Failed to create testimonial' });
-  }
-});
-
-// Delete testimonial (Admin only)
-router.delete('/testimonials/:id', authenticateAdmin, async (req, res) => {
-  try {
-    await Review.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Testimonial deleted' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete testimonial' });
-  }
-});
 
 export default router;
